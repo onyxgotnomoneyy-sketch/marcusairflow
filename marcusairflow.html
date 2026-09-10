@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>marcusairflow</title>
+<style>
+  :root {
+    --bg: #10151a;
+    --panel: #161d24;
+    --line: #2a343d;
+    --text: #e9eef2;
+    --dim: #7c8a95;
+    --ding: #5ec8d8;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 2rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    margin: 0;
+  }
+  h1 span {
+    color: var(--ding);
+  }
+  .board {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 640px;
+  }
+  button {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 500;
+    padding: 1.4rem 1.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    min-width: 110px;
+    transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  button:hover {
+    border-color: var(--ding);
+  }
+  button:active,
+  button.pressed {
+    transform: scale(0.94);
+    background: #1c2830;
+    border-color: var(--ding);
+  }
+  button:focus-visible {
+    outline: 2px solid var(--ding);
+    outline-offset: 2px;
+  }
+  .hint {
+    color: var(--dim);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+  <h1>marcus<span>airflow</span></h1>
+  <div class="board">
+    <button data-name="mark">mark</button>
+    <button data-name="onyx">onyx</button>
+    <button data-name="adrian">adrian</button>
+    <button data-name="alex">alex</button>
+    <button data-name="aj">aj</button>
+  </div>
+  <p class="hint">tap a name</p>
+
+<script>
+  // Simple synthesized "ding" — no external audio file needed.
+  let audioCtx = null;
+
+  function playDing() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const now = audioCtx.currentTime;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1568, now); // G6, bright "ding"
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.3, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.9);
+  }
+
+  document.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      playDing();
+      btn.classList.add("pressed");
+      setTimeout(() => btn.classList.remove("pressed"), 120);
+    });
+  });
+</script>
+</body>
+</html>
